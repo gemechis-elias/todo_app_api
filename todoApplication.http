@@ -1,27 +1,84 @@
+# API Endpoints
+
+## Get all todos
+
+### Request
+
 GET http://localhost:3000/todos/
 
-###
-POST httP://localhost:3000/todos/
+### Response
+
+Array of todo items with the following properties:
+- id (integer)
+- todo (string)
+- description (string)
+- isCompleted (boolean)
+- priority (string)
+- category (string)
+- status (string)
+- dueDate (string, format: "yyyy-MM-dd")
+
+## Create a new todo
+
+### Request
+
+POST http://localhost:3000/todos/
 Content-Type: application/json
 
 {
   "id": 7,
   "todo": "Finalize event theme",
+  "description": "Add finishing touches to the event theme",
+  "isCompleted": false,
   "priority": "LOW",
   "status": "TO DO",
   "category": "HOME",
-  "dueDate": "2021-2-22"
+  "dueDate": "2021-02-22"
 }
-###
+
+### Response
+
+"Todo Successfully Added"
+
+## Update a todo
+
+### Request
+
 PUT http://localhost:3000/todos/6/
 Content-Type: application/json
 
 {
-  "dueDate": "2021-4-12"
+  "dueDate": "2021-04-12"
 }
 
-###
+### Response
+
+"Due Date Updated"
+
+## Delete a todo
+
+### Request
+
 DELETE http://localhost:3000/todos/6/
 
-###
-GET http://localhost:3000/agenda/?date=2021-2-22
+### Response
+
+"Todo Deleted"
+
+## Get todos for a specific date
+
+### Request
+
+GET http://localhost:3000/agenda/?date=2021-02-22
+
+### Response
+
+Array of todo items scheduled for the specified date with the following properties:
+- id (integer)
+- todo (string)
+- description (string)
+- isCompleted (boolean)
+- priority (string)
+- category (string)
+- status (string)
+- dueDate (string, format: "yyyy-MM-dd")

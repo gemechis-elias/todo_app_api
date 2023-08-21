@@ -25,15 +25,7 @@ const initializeDBandServer = async () => {
 };
 initializeDBandServer();
 
-//get the list of todos
-/*
-app.get("/todos/", async (request, response) => {
-  const requestQuery = `select * from todo;`;
-  const responseResult = await database.all(requestQuery);
-  response.send(responseResult);
-});
-*/
-
+ 
 //api 1
 
 const hasPriorityAndStatusProperties = (requestQuery) => {
@@ -74,6 +66,8 @@ const outPutResult = (dbObject) => {
   return {
     id: dbObject.id,
     todo: dbObject.todo,
+    description: dbObject.description, // Adding the description property
+    isCompleted: dbObject.isCompleted, // Adding the isCompleted property
     priority: dbObject.priority,
     category: dbObject.category,
     status: dbObject.status,
@@ -85,13 +79,6 @@ app.get("/todos/", async (request, response) => {
   let data = null;
   let getTodosQuery = "";
   const { search_q = "", priority, status, category } = request.query;
-  /*console.log(hasPriorityAndStatusProperties(request.query));
-  console.log(hasCategoryAndStatus(request.query));
-  console.log(hasCategoryAndPriority(request.query));
-  console.log(hasPriorityProperty(request.query));
-  console.log(hasStatusProperty(request.query));
-  console.log(hasCategoryProperty(request.query));
-  console.log(hasSearchProperty(request.query));*/
 
   /** switch case  */
   switch (true) {
@@ -258,7 +245,7 @@ app.get("/agenda/", async (request, response) => {
 
 //api4
 app.post("/todos/", async (request, response) => {
-  const { id, todo, priority, status, category, dueDate } = request.body;
+  const { id, todo, description, isCompleted, priority, status, category, dueDate } = request.body;
   if (priority === "HIGH" || priority === "LOW" || priority === "MEDIUM") {
     if (status === "TO DO" || status === "IN PROGRESS" || status === "DONE") {
       if (
@@ -269,12 +256,11 @@ app.post("/todos/", async (request, response) => {
         if (isMatch(dueDate, "yyyy-MM-dd")) {
           const postNewDueDate = format(new Date(dueDate), "yyyy-MM-dd");
           const postTodoQuery = `
-  INSERT INTO
-    todo (id, todo, category,priority, status, due_date)
-  VALUES
-    (${id}, '${todo}', '${category}','${priority}', '${status}', '${postNewDueDate}');`;
+          INSERT INTO
+            todo (id, todo, description, isCompleted, category, priority, status, due_date)
+          VALUES
+            (${id}, '${todo}', '${description}', ${isCompleted ? 1 : 0}, '${category}', '${priority}', '${status}', '${postNewDueDate}');`;
           await database.run(postTodoQuery);
-          //console.log(responseResult);
           response.send("Todo Successfully Added");
         } else {
           response.status(400);
@@ -304,6 +290,8 @@ app.put("/todos/:todoId/", async (request, response) => {
   const previousTodo = await database.get(previousTodoQuery);
   const {
     todo = previousTodo.todo,
+    description = previousTodo.description, // Adding the description property
+    isCompleted = previousTodo.isCompleted, // Adding the isCompleted property
     priority = previousTodo.priority,
     status = previousTodo.status,
     category = previousTodo.category,
@@ -313,19 +301,16 @@ app.put("/todos/:todoId/", async (request, response) => {
   let updateTodoQuery;
   switch (true) {
     // update status
-    case requestBody.status !== undefined:
-      if (status === "TO DO" || status === "IN PROGRESS" || status === "DONE") {
-        updateTodoQuery = `
-    UPDATE todo SET todo='${todo}', priority='${priority}', status='${status}', category='${category}',
-     due_date='${dueDate}' WHERE id = ${todoId};`;
+    case requestBody.description !== undefined:
+      updateTodoQuery = `
+      UPDATE todo SET todo='${todo}', description='${description}', isCompleted=${isCompleted ? 1 : 0},
+      priority='${priority}', status='${status}', category='${category}',
+      due_date='${dueDate}' WHERE id = ${todoId};`;
 
-        await database.run(updateTodoQuery);
-        response.send(`Status Updated`);
-      } else {
-        response.status(400);
-        response.send("Invalid Todo Status");
-      }
+      await database.run(updateTodoQuery);
+      response.send(`Description Updated`);
       break;
+
 
     //update priority
     case requestBody.priority !== undefined:
@@ -387,12 +372,7 @@ app.put("/todos/:todoId/", async (request, response) => {
       break;
   }
 
-  /*updateTodoQuery = `
-    UPDATE todo SET todo='${todo}', priority='${priority}', status='${status}', category='${category}',
-     due_date='${dueDate}' WHERE id = ${todoId};`;
-
-  const responseData = await database.run(updateTodoQuery);
-  response.send(`${updateColumn} Updated`);*/
+ 
 });
 
 //api6
