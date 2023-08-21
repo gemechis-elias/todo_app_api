@@ -1,0 +1,27 @@
+GET https://a2sv-todo-app.onrender.com/todos/
+
+###
+POST https://a2sv-todo-app.onrender.com/todos/
+Content-Type: application/json
+
+{
+  "id": 7,
+  "todo": "Finalize event theme",
+  "priority": "LOW",
+  "status": "TO DO",
+  "category": "HOME",
+  "dueDate": "2021-2-22"
+}
+###
+PUT https://a2sv-todo-app.onrender.com/todos/6/
+Content-Type: application/json
+
+{
+  "dueDate": "2021-4-12"
+}
+
+###
+DELETE https://a2sv-todo-app.onrender.com/todos/6/
+
+###
+GET https://a2sv-todo-app.onrender.com/todos/agenda/?date=2021-2-22
